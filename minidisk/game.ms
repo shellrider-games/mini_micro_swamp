@@ -1,3 +1,5 @@
+import "hexgrid"
+
 clear
 
 mapOffsetX = 16
@@ -47,3 +49,11 @@ tileSprite.tint = color.green
 setSpriteToHexPos(tileSprite, 9, 4)
 
 display(4).sprites = [tileSprite] + display(4).sprites
+
+while true
+    if key.pressed("q") then break
+    gridPos = {"x": mouse.x-mapOffsetX-tileSize, "y": mouse.y-mapOffsetY-tileSize}
+    tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
+    setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
+    yield
+end while
