@@ -1,20 +1,32 @@
 import "hexgrid"
-
+import "mathUtil"
+import "easings"
 clear
 
 mapOffsetX = 16
 mapOffsetY = 16
+mapCols = 18
+mapRows = 10
+rotationTime = 0.25
 
+tileImage = file.loadImage("/sys/pics/shapes/Hexagon.png")
 hexagonImage = file.loadImage("images/hexagon.png")
-tileImage = file.loadImage("images/tile.png")
 
 tileSize = 32
 tileWidth = 2 * tileSize
 tileHeight = sqrt(3) * tileSize
 
+tiles = []
+tileSprites = []
+
+currentTileRotating = false
+rotationTimePassed = 0
+currentRotation = 0
+nextRotation = 0
+
 drawGrid = function()
-    for col in range(0,18)
-        numRows = 10 - (col % 2)
+    for col in range(0,mapCols)
+        numRows = mapRows - (col % 2)
         for row in range(0,numRows)
             yOffset = 0
             if col % 2 then yOffset = tileHeight*0.5
@@ -35,25 +47,84 @@ setSpriteToHexPos = function(sprite, x, y)
     sprite.y = tileHeight * y + tileHeight * 0.5 + yOffset + mapOffsetY
 end function
 
-pointToHex = function(pos)
-    q = (2/3 * pos.x) / tileWidth
-    r = (-1/3 * pos.x + sqrt(3)/3 * pos.y)
-    
+createNewTile = function()
+    tileSprite = new Sprite
+    tileSprite.image = tileImage
+    tileSprite.tint = color.green
+    display(4).sprites.push tileSprite
+    return tileSprite
 end function
 
-drawGrid
+couldPlaceTile = function(cubePos)
+    if tiles.indexOf(cubePos) != null then return false
+    oddQPos = hexgrid.cubeToOddq(cubePos.q,cubePos.r)
+    if(oddQPos.col >= 0 and oddQPos.col <= mapCols and oddQPos.row >= 0 and oddQPos.row <= mapRows - oddQPos.col % 2) then return true
+    return false
+end function
 
-tileSprite = new Sprite
-tileSprite.image = tileImage
-tileSprite.tint = color.green
-setSpriteToHexPos(tileSprite, 9, 4)
+startRotation = function(direction)
+    outer.rotationTimePassed = 0
+    if direction > 0 then 
+        outer.nextRotation = outer.currentRotation + 60
+    else
+        outer.nextRotation = outer.currentRotation - 60
+    end if
+    outer.currentTileRotating = 1
+end function
 
-display(4).sprites = [tileSprite] + display(4).sprites
+handleRotation = function(delta)
+    outer.rotationTimePassed = outer.rotationTimePassed + delta
+    t = easings.outQuint(outer.rotationTimePassed / rotationTime)
+        tileSprite.rotation = mathUtil.lerp(outer.currentRotation,outer.nextRotation, t)
+    if rotationTimePassed >= rotationTime then
+        tileSprite.rotation = outer.nextRotation
+        outer.currentTileRotating = false
+        outer.currentRotation = outer.nextRotation
+    end if
+end function
 
+//drawGrid
+tileSprite = createNewTile
+
+wasDown = false
+
+lastTimestamp = time
 while true
+    yield
+    currentTimestamp = time
+    delta = currentTimestamp - lastTimestamp
+    lastTimestamp = currentTimestamp
+    
     if key.pressed("q") then break
+    
+    if currentTileRotating then
+        handleRotation delta
+        continue
+    end if
+
+    if key.axis("Mouse ScrollWheel") != 0 then
+        startRotation key.axis("Mouse ScrollWheel")
+        continue
+    end if
+
+
+
+    mouseDown = mouse.button
     gridPos = {"x": mouse.x-mapOffsetX-tileSize, "y": mouse.y-mapOffsetY-tileSize}
     tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
     setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
-    yield
+    cubePos = hexgrid.oddqToCube(tilePos.col, tilePos.row)
+    if couldPlaceTile(cubePos) then
+        tileSprite.tint = color.green
+    else
+        tileSprite.tint = color.red
+    end if
+
+    if mouseDown and not wasDown and couldPlaceTile(cubePos) then
+        tiles.push cubePos
+        tileSprite = createNewTile
+        setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
+    end if
+    wasDown = mouseDown
 end while
+clear
