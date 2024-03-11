@@ -9,7 +9,7 @@ mapCols = 18
 mapRows = 10
 rotationTime = 0.25
 
-tileImage = file.loadImage("/sys/pics/shapes/Hexagon.png")
+tileImage = file.loadImage("images/tile_0_3.png")
 hexagonImage = file.loadImage("images/hexagon.png")
 
 tileSize = 32
@@ -50,7 +50,6 @@ end function
 createNewTile = function()
     tileSprite = new Sprite
     tileSprite.image = tileImage
-    tileSprite.tint = color.green
     display(4).sprites.push tileSprite
     return tileSprite
 end function
@@ -115,7 +114,7 @@ while true
     setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     cubePos = hexgrid.oddqToCube(tilePos.col, tilePos.row)
     if couldPlaceTile(cubePos) then
-        tileSprite.tint = color.green
+        tileSprite.tint = color.white
     else
         tileSprite.tint = color.red
     end if
