@@ -29,7 +29,9 @@ GameBoard.canAdd = function(tile)
     if self.tiles.len > 0 then
         adj = self.tilesAdjacentTo(tile)
         for element in adj
-            return true
+            for idx in range(tile.connections.len-1)
+                if tile.connections[idx] and element.connections[(idx+3)%6] then return true
+            end for
         end for
         return false
     end if
@@ -59,7 +61,7 @@ if (globals == locals) then
     print "Test canAdd a tile on 0,0 is true on an empty grid"
     zeroZeroTile = new rivertile.Rivertile
     zeroZeroTile.init
-    zeroZeroTile.connections[5] = true
+    zeroZeroTile.connections[0] = true
     qa.assertEqual(testboard.canAdd(zeroZeroTile), true)
     testboard.addTile(zeroZeroTile)
     print "Test canAdd a tile on 0,0 is false after placing a tile there"
@@ -71,6 +73,7 @@ if (globals == locals) then
     zeroOneTile.init
     zeroOneTile.position = {"q": 0, "r": 1, "s": -1}
     zeroOneTile.connections[3] = true
+    zeroOneTile.connections[0] = true
     print zeroZeroTile
     qa.assertEqual(testboard.tilesAdjacentTo(zeroOneTile), [zeroZeroTile])
 
@@ -79,10 +82,21 @@ if (globals == locals) then
     zeroTwoTile.position = {"q": 0, "r": 2, "s": -2}
     zeroTwoTile.connections[3] = true
 
+    zeroTwoTileWithoutCorrectConnection = new rivertile.Rivertile
+    zeroTwoTileWithoutCorrectConnection.init
+    zeroTwoTileWithoutCorrectConnection.position = {"q": 0, "r": 2, "s": -2}
+    zeroTwoTileWithoutCorrectConnection.connections[2] = true
+
+
     print "Test tile can not be placed if not adjacent to already placed tile"
     qa.assertEqual(testboard.canAdd(zeroTwoTile),false)
     print "Test tile can be placed if adjacent to already placed tile"
     qa.assertEqual(testboard.canAdd(zeroOneTile), true)
+    testboard.addTile zeroOneTile
+    print "Test tile can not be placed if connection is not correct"
+    qa.assertEqual(testboard.canAdd(zeroTwoTileWithoutCorrectConnection), false)
+    print "Test tile can be placed if connection is correct"
+    qa.assertEqual(testboard.canAdd(zeroTwoTile), true)
 
     print "All tests passed"
 end if
