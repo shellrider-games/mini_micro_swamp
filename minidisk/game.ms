@@ -57,14 +57,42 @@ setSpriteToHexPos = function(sprite, x, y)
     sprite.y = tileHeight * y + tileHeight * 0.5 + yOffset + mapOffsetY
 end function
 
+createRiverTile = function(idx)
+    noob = new rivertile.Rivertile
+    noob.init
+    if idx == 0 then
+        noob.connections[0] = true
+        noob.connections[1] = true
+    else if idx == 1 then
+        noob.connections[0] = true
+        noob.connections[2] = true
+    else if idx == 2 then
+        noob.connections[0] = true
+        noob.connections[3] = true
+    else if idx == 3 then
+        noob.connections[0] = true
+        noob.connections[1] = true
+        noob.connections[3] = true
+    else if idx == 4 then
+        noob.connections[0] = true
+        noob.connections[3] = true
+        noob.connections[5] = true
+    else if idx == 5 then
+        noob.connections[1] = true
+        noob.connections[3] = true
+        noob.connections[5] = true
+    end if
+    return noob
+end function
+
 createNewTile = function()
     tileSprite = new Sprite
     imageIdx = ceil(rnd * (tileImages.len)) - 1
     tileSprite.image = tileImages[imageIdx]
     display(4).sprites.push tileSprite
-    return tileSprite
+    tileModel = createRiverTile(imageIdx)
+    return [tileSprite, tileModel]
 end function
-
 
 startRotation = function(direction)
     outer.rotationTimePassed = 0
@@ -87,7 +115,9 @@ handleRotation = function(delta)
     end if
 end function
 
-tileSprite = createNewTile
+tile = createNewTile
+tileSprite = tile[0]
+tileModel = tile[1]
 wasDown = false
 lastTimestamp = time
 
@@ -106,6 +136,7 @@ while true
 
     if key.axis("Mouse ScrollWheel") != 0 then
         startRotation key.axis("Mouse ScrollWheel")
+        tileModel.rotate key.axis("Mouse ScrollWheel")
         continue
     end if
 
@@ -115,20 +146,19 @@ while true
     tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
     setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     cubePos = hexgrid.oddqToCube(tilePos.col, tilePos.row)
+    tileModel.position = cubePos
 
-    tile = new rivertile.Rivertile
-    tile.init
-    tile.position = cubePos
-    
-    if board.canAdd(tile) then
+    if board.canAdd(tileModel) then
         tileSprite.tint = color.white
     else
         tileSprite.tint = color.red
     end if
 
-    if mouseDown and not wasDown and board.canAdd(tile) then
-        board.addTile tile
-        tileSprite = createNewTile
+    if mouseDown and not wasDown and board.canAdd(tileModel) then
+        board.addTile tileModel
+        tile = createNewTile
+        tileSprite = tile[0]
+        tileModel = tile[1]
         setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     end if
     wasDown = mouseDown

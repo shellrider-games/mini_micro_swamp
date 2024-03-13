@@ -29,8 +29,13 @@ GameBoard.canAdd = function(tile)
     if self.tiles.len > 0 then
         adj = self.tilesAdjacentTo(tile)
         for element in adj
-            for idx in range(tile.connections.len-1)
-                if tile.connections[idx] and element.connections[(idx+3)%6] then return true
+            print tile.connections
+            print element.connections
+
+            //need to check connection depending of direction, probably simple but annoying !!!!
+
+            for idx in range(0,tile.connections.len-1)
+                if tile.connections[idx] == true and element.connections[(idx+3)%6] == true then return true
             end for
         end for
         return false
