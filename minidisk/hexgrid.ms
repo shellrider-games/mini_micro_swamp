@@ -1,5 +1,13 @@
 import "qa"
 
+cubeNeighbourDirections = [
+    {"q": 1, "r": 0, "s": -1},
+    {"q": 1, "r": -1, "s": 0},
+    {"q": 0, "r": -1, "s": 1},
+    {"q": -1, "r": 0, "s": 1},
+    {"q": -1, "r": 1, "s": 0},
+    {"q": 0, "r": 1, "s": -1}]
+
 cubeToOddq = function(q, r)
     offsetCoord = {"col" : q, "row" : r + (q - (q % 2))/2}
     return offsetCoord
@@ -40,6 +48,15 @@ pointToHexOddq = function(position, size)
     return cubeToOddq(rounded.q, rounded.r)
 end function
 
+allCubeCoordNeighbours = function(cubePosition)
+    positions = []
+    for direction in cubeNeighbourDirections
+        neighbour = {"q": cubePosition.q + direction.q, "r": cubePosition.r + direction.r, "s": cubePosition.s + direction.s}
+        positions.push neighbour
+    end for
+    return positions
+end function
+
 if (globals == locals) then
     print "Testing cubeToOddq ..."
     qa.assertEqual(cubeToOddq(0,0), {"col":0, "row": 0})
@@ -58,5 +75,15 @@ if (globals == locals) then
     qa.assertEqual(cubeRound(1.8,0,-1.8), {"q":2,"r":0,"s": -2})
     qa.assertEqual(cubeRound(1.5,0,-1.5), {"q":2,"r":0,"s": -2})
     qa.assertEqual(cubeRound(1.1,1.1,-2.2), {"q":1,"r":1,"s": -2})
+    print "Testing allCubeCoordNeighbours"
+    qa.assertEqual(allCubeCoordNeighbours({"q":0,"r":0,"s":0}).sort("s").sort("r").sort("q"),
+    [
+        {"q": 0, "r": -1, "s": 1},
+        {"q": 1, "r": -1, "s": 0},
+        {"q": 1, "r": 0, "s": -1},
+        {"q": 0, "r": 1, "s": -1},
+        {"q": -1, "r": 1, "s": 0},
+        {"q": -1, "r": 0, "s": 1}].sort("s").sort("r").sort("q"))
+
     print "All tests for cubeRound passed!"
 end if

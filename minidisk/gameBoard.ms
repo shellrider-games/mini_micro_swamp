@@ -1,0 +1,73 @@
+import "qa"
+import "rivertile"
+import "hexgrid"
+
+GameBoard = {}
+
+GameBoard.tiles = []
+GameBoard.mapCols = 18
+GameBoard.mapRows = 10
+
+GameBoard.init = function()
+    self.tiles = []
+end function
+
+GameBoard.tileOnBoardAndFree = function(tile)
+    for entry in self.tiles
+        if entry.position == tile.position then return false
+    end for
+
+    oddQPos = hexgrid.cubeToOddq(tile.position.q,tile.position.r)
+    if(oddQPos.col >= 0 and oddQPos.col <= self.mapCols and oddQPos.row >= 0 and oddQPos.row <= self.mapRows - oddQPos.col % 2) then return true
+    return false
+end function
+
+GameBoard.canAdd = function(tile)
+    if not self.tileOnBoardAndFree(tile) then
+        return false
+    end if
+    return true
+end function
+
+GameBoard.addTile = function(tile)
+    qa.assert(tile isa rivertile.Rivertile)
+    self.tiles.push tile
+end function
+
+GameBoard.tilesAdjacentTo = function(tile)
+    qa.assert(tile isa rivertile.Rivertile)
+    neighbourPositions = hexgrid.allCubeCoordNeighbours(tile.position)
+    adjacentTiles = []
+    for neighbour in neighbourPositions
+        for entry in self.tiles
+            if entry.position == neighbour then adjacentTiles.push entry
+        end for
+    end for
+    return adjacentTiles
+end function
+
+if (globals == locals) then
+    print "Test create gameboard"
+    testboard = new GameBoard
+    testboard.init
+    qa.assert(testboard isa GameBoard)
+    print "Test canAdd a tile on 0,0 is true on an empty grid"
+    zeroZeroTile = new rivertile.Rivertile
+    zeroZeroTile.init
+    qa.assertEqual(testboard.canAdd(zeroZeroTile), true)
+    
+    testboard.addTile(zeroZeroTile)
+    zeroZeroTile = new rivertile.Rivertile
+    zeroZeroTile.init
+    print "Test canAdd a tile on 0,0 is false after placing a tile there"
+    qa.assertEqual(testboard.canAdd(zeroZeroTile),false)
+    print "Test tilesAdjacent to tile at 0,0 should be empty list"
+    qa.assertEqual(testboard.tilesAdjacentTo(zeroZeroTile), [])
+    print "Test tilesAdjacent to tile at 0,1 should be list with tile at 0,0"
+    zeroOneTile = new rivertile.Rivertile
+    zeroOneTile.init
+    zeroOneTile.position = {"q": 1, "r": 0, "s": -1}
+    qa.assertEqual(testboard.tilesAdjacentTo(zeroOneTile), [zeroZeroTile])
+
+    print "All tests passed"
+end if
