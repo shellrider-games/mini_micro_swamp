@@ -9,7 +9,7 @@ mapCols = 18
 mapRows = 10
 rotationTime = 0.25
 
-tileImage = file.loadImage("images/tile_0_3.png")
+tileImage = file.loadImage("images/tile_0_2.png")
 hexagonImage = file.loadImage("images/hexagon.png")
 
 tileSize = 32
