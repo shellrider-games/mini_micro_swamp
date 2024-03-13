@@ -9,7 +9,11 @@ mapCols = 18
 mapRows = 10
 rotationTime = 0.25
 
-tileImage = file.loadImage("images/tile_0_2.png")
+tileImages = []
+tileImages.push file.loadImage("images/tile_variations/tile_0_1.png")
+tileImages.push file.loadImage("images/tile_variations/tile_0_2.png")
+tileImages.push file.loadImage("images/tile_variations/tile_0_3.png")
+
 hexagonImage = file.loadImage("images/hexagon.png")
 
 tileSize = 32
@@ -49,7 +53,8 @@ end function
 
 createNewTile = function()
     tileSprite = new Sprite
-    tileSprite.image = tileImage
+    imageIdx = ceil(rnd * (tileImages.len)) - 1
+    tileSprite.image = tileImages[imageIdx]
     display(4).sprites.push tileSprite
     return tileSprite
 end function
