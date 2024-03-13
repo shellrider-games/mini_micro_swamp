@@ -9,7 +9,7 @@ oddqToCube = function(col, row)
     cubeCoord = {}
     cubeCoord.q = col
     cubeCoord.r = row - (col - (col % 2))/2
-    cubeCoord.s = -cubeCoord.q - cubeCoord.r //{"q" : col, "r" : row - (col - (col % 2))/2, "s" : -col-row}
+    cubeCoord.s = -cubeCoord.q - cubeCoord.r
     return cubeCoord
 end function
 

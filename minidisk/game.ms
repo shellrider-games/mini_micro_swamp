@@ -90,12 +90,10 @@ handleRotation = function(delta)
     end if
 end function
 
-//drawGrid
 tileSprite = createNewTile
-
 wasDown = false
-
 lastTimestamp = time
+
 while true
     yield
     currentTimestamp = time
@@ -115,10 +113,12 @@ while true
     end if
 
     mouseDown = mouse.button
+
     gridPos = {"x": mouse.x-mapOffsetX-tileSize, "y": mouse.y-mapOffsetY-tileSize}
     tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
     setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     cubePos = hexgrid.oddqToCube(tilePos.col, tilePos.row)
+    
     if couldPlaceTile(cubePos) then
         tileSprite.tint = color.white
     else
