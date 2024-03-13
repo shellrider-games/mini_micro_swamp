@@ -111,8 +111,6 @@ while true
         continue
     end if
 
-
-
     mouseDown = mouse.button
     gridPos = {"x": mouse.x-mapOffsetX-tileSize, "y": mouse.y-mapOffsetY-tileSize}
     tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
