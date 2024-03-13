@@ -37,12 +37,10 @@ GameBoard.canAdd = function(tile)
 end function
 
 GameBoard.addTile = function(tile)
-    qa.assert(tile isa rivertile.Rivertile)
     self.tiles.push tile
 end function
 
 GameBoard.tilesAdjacentTo = function(tile)
-    qa.assert(tile isa rivertile.Rivertile)
     neighbourPositions = hexgrid.allCubeCoordNeighbours(tile.position)
     adjacentTiles = []
     for neighbour in neighbourPositions

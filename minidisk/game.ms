@@ -1,6 +1,8 @@
 import "hexgrid"
 import "mathUtil"
 import "easings"
+import "gameBoard"
+import "rivertile"
 clear
 
 mapOffsetX = 16
@@ -23,6 +25,7 @@ tileSize = 32
 tileWidth = 2 * tileSize
 tileHeight = sqrt(3) * tileSize
 
+board = new gameBoard.GameBoard
 tiles = []
 tileSprites = []
 
@@ -62,12 +65,6 @@ createNewTile = function()
     return tileSprite
 end function
 
-couldPlaceTile = function(cubePos)
-    if tiles.indexOf(cubePos) != null then return false
-    oddQPos = hexgrid.cubeToOddq(cubePos.q,cubePos.r)
-    if(oddQPos.col >= 0 and oddQPos.col <= mapCols and oddQPos.row >= 0 and oddQPos.row <= mapRows - oddQPos.col % 2) then return true
-    return false
-end function
 
 startRotation = function(direction)
     outer.rotationTimePassed = 0
@@ -118,16 +115,19 @@ while true
     tilePos = hexgrid.pointToHexOddq(gridPos, tileSize)
     setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     cubePos = hexgrid.oddqToCube(tilePos.col, tilePos.row)
+
+    tile = new rivertile.Rivertile
+    tile.init
+    tile.position = cubePos
     
-    if couldPlaceTile(cubePos) then
+    if board.canAdd(tile) then
         tileSprite.tint = color.white
     else
         tileSprite.tint = color.red
     end if
 
-    if mouseDown and not wasDown and couldPlaceTile(cubePos) then
-        print cubePos
-        tiles.push cubePos
+    if mouseDown and not wasDown and board.canAdd(tile) then
+        board.addTile tile
         tileSprite = createNewTile
         setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     end if
