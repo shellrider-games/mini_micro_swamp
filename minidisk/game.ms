@@ -13,6 +13,9 @@ tileImages = []
 tileImages.push file.loadImage("images/tile_variations/tile_0_1.png")
 tileImages.push file.loadImage("images/tile_variations/tile_0_2.png")
 tileImages.push file.loadImage("images/tile_variations/tile_0_3.png")
+tileImages.push file.loadImage("images/tile_variations/tile_0_1_3.png")
+tileImages.push file.loadImage("images/tile_variations/tile_0_3_5.png")
+tileImages.push file.loadImage("images/tile_variations/tile_1_3_5.png")
 
 hexagonImage = file.loadImage("images/hexagon.png")
 
