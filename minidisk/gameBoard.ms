@@ -26,6 +26,13 @@ GameBoard.canAdd = function(tile)
     if not self.tileOnBoardAndFree(tile) then
         return false
     end if
+    if self.tiles.len > 0 then
+        adj = self.tilesAdjacentTo(tile)
+        for element in adj
+            return true
+        end for
+        return false
+    end if
     return true
 end function
 
@@ -54,11 +61,9 @@ if (globals == locals) then
     print "Test canAdd a tile on 0,0 is true on an empty grid"
     zeroZeroTile = new rivertile.Rivertile
     zeroZeroTile.init
+    zeroZeroTile.connections[5] = true
     qa.assertEqual(testboard.canAdd(zeroZeroTile), true)
-    
     testboard.addTile(zeroZeroTile)
-    zeroZeroTile = new rivertile.Rivertile
-    zeroZeroTile.init
     print "Test canAdd a tile on 0,0 is false after placing a tile there"
     qa.assertEqual(testboard.canAdd(zeroZeroTile),false)
     print "Test tilesAdjacent to tile at 0,0 should be empty list"
@@ -66,8 +71,20 @@ if (globals == locals) then
     print "Test tilesAdjacent to tile at 0,1 should be list with tile at 0,0"
     zeroOneTile = new rivertile.Rivertile
     zeroOneTile.init
-    zeroOneTile.position = {"q": 1, "r": 0, "s": -1}
+    zeroOneTile.position = {"q": 0, "r": 1, "s": -1}
+    zeroOneTile.connections[3] = true
+    print zeroZeroTile
     qa.assertEqual(testboard.tilesAdjacentTo(zeroOneTile), [zeroZeroTile])
+
+    zeroTwoTile = new rivertile.Rivertile
+    zeroTwoTile.init
+    zeroTwoTile.position = {"q": 0, "r": 2, "s": -2}
+    zeroTwoTile.connections[3] = true
+
+    print "Test tile can not be placed if not adjacent to already placed tile"
+    qa.assertEqual(testboard.canAdd(zeroTwoTile),false)
+    print "Test tile can be placed if adjacent to already placed tile"
+    qa.assertEqual(testboard.canAdd(zeroOneTile), true)
 
     print "All tests passed"
 end if

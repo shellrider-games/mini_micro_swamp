@@ -126,6 +126,7 @@ while true
     end if
 
     if mouseDown and not wasDown and couldPlaceTile(cubePos) then
+        print cubePos
         tiles.push cubePos
         tileSprite = createNewTile
         setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
