@@ -29,14 +29,24 @@ GameBoard.canAdd = function(tile)
     if self.tiles.len > 0 then
         adj = self.tilesAdjacentTo(tile)
         for element in adj
-            print tile.connections
-            print element.connections
 
-            //need to check connection depending of direction, probably simple but annoying !!!!
+            dir = {"q" : tile.position.q - element.position.q,
+                "r" : tile.position.r - element.position.r,
+                "s" : tile.position.s - element.position.s}
 
-            for idx in range(0,tile.connections.len-1)
-                if tile.connections[idx] == true and element.connections[(idx+3)%6] == true then return true
-            end for
+            if dir.q == 0 and dir.r == -1 then
+                if tile.connections[0] == true and element.connections[3] == true then return true
+            else if dir.q == 1 and dir.r == -1 then
+                if tile.connections[5] == true and element.connections[2] == true then return true
+            else if dir.q == 1 and dir.r == 0 then
+                if tile.connections[4] == true and element.connections[1] == true then return true
+            else if dir.q == 0 and dir.r == 1 then
+                if tile.connections[3] == true and element.connections[0] == true then return true
+            else if dir.q == -1 and dir.r == 1 then
+                if tile.connections[2] == true and element.connections[5] == true then return true
+            else if dir.q == -1 and dir.r == 0 then
+                if tile.connections[1] == true and element.connections[4] == true then return true
+            end if
         end for
         return false
     end if

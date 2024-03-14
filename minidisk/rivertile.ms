@@ -15,8 +15,8 @@ Rivertile.connections = [
     false]
 
 Rivertile.rotate = function(direction)
-    if direction < 0 then
-        self.rotation = (self.rotation + 5) % 6
+    if direction > 0 then
+        self.rotation = (self.rotation + 1) % 6
         self.connections = [
             self.connections[1],
             self.connections[2],
@@ -25,7 +25,7 @@ Rivertile.rotate = function(direction)
             self.connections[5],
             self.connections[0]]
     else
-        self.rotation = (self.rotation + 1) % 6
+        self.rotation = (self.rotation + 5) % 6
         self.connections = [
             self.connections[5],
             self.connections[0],

@@ -159,6 +159,9 @@ while true
         tile = createNewTile
         tileSprite = tile[0]
         tileModel = tile[1]
+        currentRotation = 0
+        nextRotation = 0
+        tileSprite.rotation = 0
         setSpriteToHexPos(tileSprite, tilePos.col, tilePos.row)
     end if
     wasDown = mouseDown
