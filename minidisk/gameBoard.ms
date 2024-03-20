@@ -22,39 +22,93 @@ GameBoard.tileOnBoardAndFree = function(tile)
     return false
 end function
 
+GameBoard.adjacentConnections = function(tile)
+    adjConnections = [0,0,0,0,0,0]
+    posAround = hexgrid.allCubeCoordNeighbours(tile.position)
+    for element in posAround
+        adjTile = self.getTile(element)
+        if adjTile == null then continue
+
+        dir = {"q" : tile.position.q - element.q,
+                "r" : tile.position.r - element.r,
+                "s" : tile.position.s - element.s}
+
+        if dir.q == 0 and dir.r == -1 then
+            if adjTile.connections[3] then
+                adjConnections[0] = 1
+            else
+                adjConnections[0] = 2
+            end if
+        else if dir.q == 1 and dir.r == -1 then
+            if adjTile.connections[2] then 
+                adjConnections[5] = 1
+            else
+                adjConnections[5] = 2
+            end if
+        else if dir.q == 1 and dir.r == 0 then
+            if adjTile.connections[1] then
+                 adjConnections[4] = 1
+            else
+                adjConnections[4] = 2
+            end if
+        else if dir.q == 0 and dir.r == 1 then
+            if adjTile.connections[0] then
+                adjConnections[3] = 1
+            else
+                adjConnections[3] = 2
+            end if
+        else if dir.q == -1 and dir.r == 1 then
+            if adjTile.connections[5] then
+                adjConnections[2] = 1
+            else
+                adjConnections[2] = 2
+            end if
+        else if dir.q == -1 and dir.r == 0 then
+            if adjTile.connections[4] then 
+                adjConnections[1] = 1
+            else
+                adjConnections[1] = 2
+            end if
+        end if
+    end for
+    return adjConnections
+end function
+
 GameBoard.canAdd = function(tile)
     if not self.tileOnBoardAndFree(tile) then
         return false
     end if
     if self.tiles.len > 0 then
-        adj = self.tilesAdjacentTo(tile)
-        for element in adj
-
-            dir = {"q" : tile.position.q - element.position.q,
-                "r" : tile.position.r - element.position.r,
-                "s" : tile.position.s - element.position.s}
-
-            if dir.q == 0 and dir.r == -1 then
-                if tile.connections[0] == true and element.connections[3] == true then return true
-            else if dir.q == 1 and dir.r == -1 then
-                if tile.connections[5] == true and element.connections[2] == true then return true
-            else if dir.q == 1 and dir.r == 0 then
-                if tile.connections[4] == true and element.connections[1] == true then return true
-            else if dir.q == 0 and dir.r == 1 then
-                if tile.connections[3] == true and element.connections[0] == true then return true
-            else if dir.q == -1 and dir.r == 1 then
-                if tile.connections[2] == true and element.connections[5] == true then return true
-            else if dir.q == -1 and dir.r == 0 then
-                if tile.connections[1] == true and element.connections[4] == true then return true
-            end if
+        adjConnections = self.adjacentConnections(tile)
+        numberConnections = 0 
+        for value in adjConnections
+            numberConnections = numberConnections + value
         end for
-        return false
+
+        if numberConnections <= 0 then return false
+
+        for i in range(0,5)
+            if adjConnections[i] == 1 and not tile.connections[i] then return false
+        end for
+
+        for i in range(0,5)
+            if tile.connections[i] and adjConnections[i] == 2 then return false
+        end for
+
     end if
     return true
 end function
 
 GameBoard.addTile = function(tile)
     self.tiles.push tile
+end function
+
+GameBoard.getTile = function(pos)
+    val = null
+    for tile in self.tiles
+        if tile.position == pos then val = tile
+    end for
+    return val
 end function
 
 GameBoard.tilesAdjacentTo = function(tile)
