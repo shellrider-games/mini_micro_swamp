@@ -80,16 +80,24 @@ GameBoard.canAdd = function(tile)
     end if
     if self.tiles.len > 0 then
         adjConnections = self.adjacentConnections(tile)
-        numberConnections = 0 
+
+        numberConnections = 0
+
         for value in adjConnections
             numberConnections = numberConnections + value
         end for
+       
 
         if numberConnections <= 0 then return false
 
+        connectedToRiver = false
+
         for i in range(0,5)
             if adjConnections[i] == 1 and not tile.connections[i] then return false
+            if adjConnections[i] == 1 and tile.connections[i] then connectedToRiver = true
         end for
+
+        if not connectedToRiver then return false
 
         for i in range(0,5)
             if tile.connections[i] and adjConnections[i] == 2 then return false
