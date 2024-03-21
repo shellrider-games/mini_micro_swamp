@@ -151,7 +151,7 @@ while true
     if board.canAdd(tileModel) then
         tileSprite.tint = color.white
     else
-        tileSprite.tint = color.red
+        tileSprite.tint = color.rgba(255,255,255,64)
     end if
 
     if mouseDown and not wasDown and board.canAdd(tileModel) then
